@@ -1,0 +1,5 @@
+.testrepository
+*.pyc
+.tox
+*.egg-info
+.eggs
