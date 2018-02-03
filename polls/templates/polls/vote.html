@@ -3,6 +3,7 @@
 {% block content %}
 <h1>Happiness Check</h1>
 
+<p>Here's your daily checkup {% firstof user.firstname user.username %}</p>
 <form method="POST" class="post-form">
 {% csrf_token %}
     {{ form.as_p }}

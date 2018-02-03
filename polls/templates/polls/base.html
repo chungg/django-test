@@ -5,6 +5,9 @@
     {% block title %}<title>Team Stability</title>{% endblock %}
 </head>
 <body>
+    {% if user.is_authenticated %}
+    <a href="{% url 'polls:logout' %}">Logout</a>
+    {% endif %}
     <div id="content">
         {% block content %}<!-- default content text (typically empty) -->{% endblock %}
     </div>
