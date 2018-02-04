@@ -1,8 +1,9 @@
 from django import forms
 
+from . import models
+
 
 class ChoiceForm(forms.Form):
-    CHOICES = (('1', '...'), ('2', 'meh'), ('3', 'Ok'),
-               ('4', 'Good'), ('5', 'YEAAAAAA'))
     choice_field = forms.ChoiceField(
-        label='How you feeling?',  widget=forms.RadioSelect, choices=CHOICES)
+        label='How you feeling?',  widget=forms.RadioSelect,
+        choices=models.Choice.CHOICES)

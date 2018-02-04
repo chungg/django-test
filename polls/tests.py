@@ -118,3 +118,56 @@ class ViewTests(test.TestCase):
         self.assertEqual(200, response.status_code)
         response = self.client.get('/polls/')
         self.assertEqual(200, response.status_code)
+
+    def _populate_db(self):
+        models.Choice.objects.create(value=2, user=self.user1)
+        models.Choice.objects.create(value=3, user=self.user2)
+        models.Choice.objects.create(value=4, user=self.user3)
+
+    def test_user_no_group_sees_all(self):
+        self._populate_db()
+        orphan_user = auth_models.User.objects.create_user(username='nogroup')
+        self.client.force_login(orphan_user)
+        response = self.client.get('/polls/results/')
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(3.0, response.context['avg_score'])
+        self.assertEqual([0, 1, 1, 1, 0], [score for __, __, score in
+                                           response.context['score_count']])
+
+    def test_user_only_sees_group(self):
+        self._populate_db()
+        self.client.force_login(self.user1)
+        response = self.client.get('/polls/results/')
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(2.0, response.context['avg_score'])
+        self.assertEqual([0, 1, 0, 0, 0], [score for __, __, score in
+                                           response.context['score_count']])
+
+    def test_user_sees_others_in_group(self):
+        self._populate_db()
+        self.client.force_login(self.user2)
+        response = self.client.get('/polls/results/')
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(3.5, response.context['avg_score'])
+        self.assertEqual([0, 0, 1, 1, 0], [score for __, __, score in
+                                           response.context['score_count']])
+
+    def test_user_in_multiple_group_sees_both(self):
+        self._populate_db()
+        user = auth_models.User.objects.create_user(username='allgroups')
+        user.groups.add(self.group1)
+        user.groups.add(self.group2)
+        self.client.force_login(user)
+        response = self.client.get('/polls/results/')
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(3.0, response.context['avg_score'])
+        self.assertEqual([0, 1, 1, 1, 0], [score for __, __, score in
+                                           response.context['score_count']])
+
+    def test_user_no_votes_all_empty_responses(self):
+        self.client.force_login(self.user1)
+        response = self.client.get('/polls/results/')
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(0.0, response.context['avg_score'])
+        self.assertEqual([0, 0, 0, 0, 0], [score for __, __, score in
+                                           response.context['score_count']])

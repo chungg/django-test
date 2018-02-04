@@ -8,6 +8,8 @@ from django.utils.encoding import python_2_unicode_compatible
 
 @python_2_unicode_compatible
 class Choice(models.Model):
+    CHOICES = (('1', 'Leave me alone'), ('2', 'Not good'), ('3', 'Ok'),
+               ('4', 'Pretty good'), ('5', 'YEAAAAAA'))
     timestamp = models.DateTimeField(auto_now_add=True)
     value = models.IntegerField(default=0)
     user = models.ForeignKey(auth_models.User, on_delete=models.CASCADE)

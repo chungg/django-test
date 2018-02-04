@@ -2,4 +2,12 @@
 
 {% block content %}
 <h1>Happiness Results</h1>
+<ul>
+    {% for text, score, count in score_count %}
+    <li>{{ text }}({{ score }}): <b>{{ count }}</b>
+    </li>
+    {% endfor %}
+</ul>
+<p>Average Team Score: <b>{{ avg_score }}</b></p>
+</div>
 {% endblock %}
