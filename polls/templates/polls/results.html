@@ -3,9 +3,11 @@
 {% block content %}
 <h1>Happiness Results</h1>
 <ul>
-    {% for text, score, count in score_count %}
-    <li>{{ text }}({{ score }}): <b>{{ count }}</b>
-    </li>
+    {% for text, score, count, percent in score_stats %}
+    <li>{{ text }}({{ score }}): <b>{{ count }}</b></li>
+    <div class="progress">
+	<div class="progress-bar" role="progressbar" aria-valuenow="{{ percent }}" aria-valuemin="0" aria-valuemax="100" style="width:{{ percent }}%"></div>
+    </div>
     {% endfor %}
 </ul>
 <p>Average Team Score: <b>{{ avg_score }}</b></p>

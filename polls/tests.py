@@ -131,8 +131,12 @@ class ViewTests(test.TestCase):
         response = self.client.get('/polls/results/')
         self.assertEqual(200, response.status_code)
         self.assertEqual(3.0, response.context['avg_score'])
-        self.assertEqual([0, 1, 1, 1, 0], [score for __, __, score in
-                                           response.context['score_count']])
+        self.assertEqual([0, 1, 1, 1, 0], [score for __, __, score, __ in
+                                           response.context['score_stats']])
+        self.assertEqual([0.0, 33.33333333333333, 33.33333333333333,
+                          33.33333333333333, 0],
+                         [percent for __, __, __, percent in
+                          response.context['score_stats']])
 
     def test_user_only_sees_group(self):
         self._populate_db()
@@ -140,8 +144,11 @@ class ViewTests(test.TestCase):
         response = self.client.get('/polls/results/')
         self.assertEqual(200, response.status_code)
         self.assertEqual(2.0, response.context['avg_score'])
-        self.assertEqual([0, 1, 0, 0, 0], [score for __, __, score in
-                                           response.context['score_count']])
+        self.assertEqual([0, 1, 0, 0, 0], [score for __, __, score, __ in
+                                           response.context['score_stats']])
+        self.assertEqual([0.0, 100.0, 0, 0, 0],
+                         [percent for __, __, __, percent in
+                          response.context['score_stats']])
 
     def test_user_sees_others_in_group(self):
         self._populate_db()
@@ -149,8 +156,11 @@ class ViewTests(test.TestCase):
         response = self.client.get('/polls/results/')
         self.assertEqual(200, response.status_code)
         self.assertEqual(3.5, response.context['avg_score'])
-        self.assertEqual([0, 0, 1, 1, 0], [score for __, __, score in
-                                           response.context['score_count']])
+        self.assertEqual([0, 0, 1, 1, 0], [score for __, __, score, __ in
+                                           response.context['score_stats']])
+        self.assertEqual([0.0, 0.0, 50.0, 50.0, 0],
+                         [percent for __, __, __, percent in
+                          response.context['score_stats']])
 
     def test_user_in_multiple_group_sees_both(self):
         self._populate_db()
@@ -161,13 +171,20 @@ class ViewTests(test.TestCase):
         response = self.client.get('/polls/results/')
         self.assertEqual(200, response.status_code)
         self.assertEqual(3.0, response.context['avg_score'])
-        self.assertEqual([0, 1, 1, 1, 0], [score for __, __, score in
-                                           response.context['score_count']])
+        self.assertEqual([0, 1, 1, 1, 0], [score for __, __, score, __ in
+                                           response.context['score_stats']])
+        self.assertEqual([0.0, 33.33333333333333, 33.33333333333333,
+                          33.33333333333333, 0],
+                         [percent for __, __, __, percent in
+                          response.context['score_stats']])
 
     def test_user_no_votes_all_empty_responses(self):
         self.client.force_login(self.user1)
         response = self.client.get('/polls/results/')
         self.assertEqual(200, response.status_code)
         self.assertEqual(0.0, response.context['avg_score'])
-        self.assertEqual([0, 0, 0, 0, 0], [score for __, __, score in
-                                           response.context['score_count']])
+        self.assertEqual([0, 0, 0, 0, 0], [score for __, __, score, __ in
+                                           response.context['score_stats']])
+        self.assertEqual([0, 0, 0, 0, 0],
+                         [percent for __, __, __, percent in
+                          response.context['score_stats']])

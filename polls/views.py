@@ -45,6 +45,9 @@ class ResultsView(generic.TemplateView):
         matches = [i[0] for i in matches.values_list('value')]
         context['avg_score'] = numpy.mean(matches) if matches else 0.0
         values, texts = zip(*models.Choice.CHOICES)
-        context['score_count'] = list(itertools.izip_longest(
-            texts, values, numpy.bincount(matches)[1:], fillvalue=0))
+        counts = numpy.bincount(matches)[1:]
+        percents = ([float(i) / len(matches) * 100 for i in counts]
+                    if matches else [])
+        context['score_stats'] = list(itertools.izip_longest(
+            texts, values, counts, percents, fillvalue=0))
         return context

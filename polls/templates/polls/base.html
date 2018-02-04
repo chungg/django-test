@@ -3,12 +3,13 @@
 <html lang="en">
 <head>
     {% block title %}<title>Team Stability</title>{% endblock %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body>
     {% if user.is_authenticated %}
     <a href="{% url 'polls:logout' %}">Logout</a>
     {% endif %}
-    <div id="content">
+    <div id="content" style="max-width: 590px;margin: 0 auto 50px auto;">
         {% block content %}<!-- default content text (typically empty) -->{% endblock %}
     </div>
 </body>
